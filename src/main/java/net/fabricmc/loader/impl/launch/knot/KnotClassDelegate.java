@@ -54,6 +54,9 @@ import net.fabricmc.loader.impl.util.UrlUtil;
 import net.fabricmc.loader.impl.util.log.Log;
 import net.fabricmc.loader.impl.util.log.LogCategory;
 
+/**
+* This code has been modified from its original form to support Andromedas shenanigans
+*/
 final class KnotClassDelegate<T extends ClassLoader & ClassLoaderAccess> implements KnotClassLoaderInterface {
 	private static final boolean LOG_CLASS_LOAD = System.getProperty(SystemProperties.DEBUG_LOG_CLASS_LOAD) != null;
 	private static final boolean LOG_CLASS_LOAD_ERRORS = LOG_CLASS_LOAD || System.getProperty(SystemProperties.DEBUG_LOG_CLASS_LOAD_ERRORS) != null;
@@ -230,12 +233,16 @@ final class KnotClassDelegate<T extends ClassLoader & ClassLoaderAccess> impleme
 								throw e;
 							}
 						} else if (!isValidParentUrl(url, fileName)) { // available, but restricted
+							// Andromeda start
+							System.out.println(fileName);
+							System.out.println(url);
+							// Andromeda end
 							// The class would technically be available, but the game provider restricted it from being
 							// loaded by setting validParentUrls and not including "url". Typical causes are:
 							// - accessing classes too early (game libs shouldn't be used until Loader is ready)
 							// - using jars that are only transient (deobfuscation input or pass-through installers)
 							String msg = String.format("can't load class %s at %s as it hasn't been exposed to the game (yet? The system property "+SystemProperties.PATH_GROUPS+" may not be set correctly in-dev)",
-									name, getCodeSource(url, fileName));
+								name, getCodeSource(url, fileName));
 							if (LOG_CLASS_LOAD_ERRORS) Log.warn(LogCategory.KNOT, msg);
 							throw new ClassNotFoundException(msg);
 						} else { // load from system cl
