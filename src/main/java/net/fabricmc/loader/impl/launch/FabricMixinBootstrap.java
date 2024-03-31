@@ -55,9 +55,6 @@ public final class FabricMixinBootstrap {
 			throw new RuntimeException("FabricMixinBootstrap has already been initialized!");
 		}
 
-		System.setProperty("mixin.bootstrapService", MixinServiceKnotBootstrap.class.getName());
-		System.setProperty("mixin.service", MixinServiceKnot.class.getName());
-
 		MixinBootstrap.init();
 
 		if (FabricLauncherBase.getLauncher().isDevelopment()) {
