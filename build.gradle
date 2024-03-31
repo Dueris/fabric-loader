@@ -13,8 +13,6 @@ plugins {
 	id 'java-library'
 	id 'eclipse'
 	id 'maven-publish'
-	id 'checkstyle'
-	id 'com.diffplug.spotless' version "6.22.0"
 	id 'fabric-loom' version '1.4-SNAPSHOT' apply false
 	id 'com.github.johnrengelman.shadow' version '8.1.1'
 	id 'me.modmuss50.remotesign' version "0.4.0"
@@ -29,8 +27,6 @@ def ENV = System.getenv()
 allprojects {
 	apply plugin: 'java-library'
 	apply plugin: 'eclipse'
-	apply plugin: 'checkstyle'
-	apply plugin: "com.diffplug.spotless"
 
 	def constantsSource = rootProject.file("src/main/java/net/fabricmc/loader/impl/FabricLoaderImpl.java").text
 	version = (constantsSource =~ /\s+VERSION\s*=\s*"(.*)";/)[0][1] + (ENV.GITHUB_ACTIONS ? "" : "+local")
@@ -316,20 +312,6 @@ task javadocJar(type: Jar) {
 
 build.dependsOn javadocJar
 
-allprojects {
-	checkstyle {
-		configFile = project.rootProject.file("checkstyle.xml")
-		toolVersion = '8.44'
-	}
-
-	spotless {
-		java {
-			licenseHeaderFile(rootProject.file("HEADER"))
-			targetExclude '**/lib/gson/*.java'
-		}
-	}
-}
-
 // Causes more trouble than its worth
 tasks.withType(GenerateModuleMetadata) {
 	enabled = false
@@ -378,13 +360,16 @@ publishing {
 
 	// select the repositories you want to publish to
 	repositories {
-		if (ENV.MAVEN_URL) {
-			maven {
-				url ENV.MAVEN_URL
-				credentials {
-					username ENV.MAVEN_USERNAME
-					password ENV.MAVEN_PASSWORD
-				}
+		maven {
+			name = "sonatype"
+			if (version.toString().endsWith("SNAPSHOT")) {
+				url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+			} else {
+				url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+			}
+			credentials {
+				username=System.getenv("OSSRH_USERNAME")
+				password=System.getenv("OSSRH_PASSWORD")
 			}
 		}
 	}
