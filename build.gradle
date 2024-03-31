@@ -341,13 +341,13 @@ if (signingEnabled) {
 
 tasks.register("makeJavadocPublisher"){
 	dependsOn(tasks.javadocJar)
-	archiveFileName.set("fabric-loader-javadoc-SNAPSHOT.jar")
+	archiveClassifier = "fabric-loader-javadoc-SNAPSHOT.jar"
 	from(sourceSets.main.get().output)
 }
 
 tasks.register("makeSourcesPublisher"){
 	dependsOn(tasks.sourcesJar)
-	archiveFileName.set("fabric-loader-sources-SNAPSHOT.jar")
+	archiveClassifier = "fabric-loader-sources-SNAPSHOT.jar"
 	from(sourceSets.main.get().output)
 }
 
