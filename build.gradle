@@ -351,12 +351,12 @@ publishing {
 			artifact(tasks.getByName("javadocJar")) {
 				groupId = "io.github.dueris"
 				artifactId = "fabric-loader"
-				version = "0.15.7-SNAPSHOT"
+				version = "0.15.7-javadoc-SNAPSHOT"
 			}
 			artifact(tasks.getByName("sourcesJar")){
 				groupId = "io.github.dueris"
 				artifactId = "fabric-loader"
-				version = "0.15.7-SNAPSHOT"
+				version = "0.15.7-sources-SNAPSHOT"
 			}
 			artifact(file('src/main/resources/fabric-installer.json')) {
 				builtBy copyJson
@@ -372,7 +372,7 @@ publishing {
 	repositories {
 		maven {
 			name = "sonatype"
-			if (version.toString().endsWith("SNAPSHOT")) {
+			if (version.toString().endsWith("SNAPSHOT") || true) {
 				url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
 			} else {
 				url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
