@@ -339,6 +339,18 @@ if (signingEnabled) {
 	}
 }
 
+tasks.register<Jar>("makeJavadocPublisher"){
+	dependsOn(tasks.javadocJar)
+	archiveFileName.set("fabric-loader-javadoc-SNAPSHOT.jar")
+	from(sourceSets.main.get().output)
+}
+
+tasks.register<Jar>("makeSourcesPublisher"){
+	dependsOn(tasks.sourcesJar)
+	archiveFileName.set("fabric-loader-sources-SNAPSHOT.jar")
+	from(sourceSets.main.get().output)
+}
+
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
@@ -347,8 +359,16 @@ publishing {
 				builtBy(signingEnabled ? signProguard : proguardJar)
 				classifier = null
 			}
-			artifact(sourcesJar)
-			artifact javadocJar
+			artifact(tasks.getByName("makeJavadocPublisher")){
+				groupId = "io.github.dueris"
+				artifactId = "fabric-loader"
+				version = "0.15.7-SNAPSHOT"
+			}
+			artifact(tasks.getByName("makeSourcesPublisher")){
+				groupId = "io.github.dueris"
+				artifactId = "fabric-loader"
+				version = "0.15.7-SNAPSHOT"
+			}
 			artifact(file('src/main/resources/fabric-installer.json')) {
 				builtBy copyJson
 			}
