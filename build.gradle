@@ -242,6 +242,7 @@ tasks.withType(AbstractArchiveTask) {
 }
 
 sourcesJar {
+	archiveClassifier = "sources-SNAPSHOT"
 	from sourceSets.main.allSource
 	from project(":minecraft").sourceSets.main.allSource
 }
@@ -308,7 +309,7 @@ javadoc {
 task javadocJar(type: Jar) {
 	dependsOn javadoc
 	from javadoc.destinationDir
-	archiveClassifier = 'javadoc'
+	archiveClassifier = 'javadoc-SNAPSHOT'
 }
 
 build.dependsOn javadocJar
@@ -339,18 +340,6 @@ if (signingEnabled) {
 	}
 }
 
-tasks.register("makeJavadocPublisher"){
-	dependsOn(tasks.javadocJar)
-	archiveClassifier = "fabric-loader-javadoc-SNAPSHOT.jar"
-	from(sourceSets.main.get().output)
-}
-
-tasks.register("makeSourcesPublisher"){
-	dependsOn(tasks.sourcesJar)
-	archiveClassifier = "fabric-loader-sources-SNAPSHOT.jar"
-	from(sourceSets.main.get().output)
-}
-
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
@@ -359,12 +348,12 @@ publishing {
 				builtBy(signingEnabled ? signProguard : proguardJar)
 				classifier = null
 			}
-			artifact(tasks.getByName("makeJavadocPublisher")){
+			artifact(tasks.getByName("javadocJar")) {
 				groupId = "io.github.dueris"
 				artifactId = "fabric-loader"
 				version = "0.15.7-SNAPSHOT"
 			}
-			artifact(tasks.getByName("makeSourcesPublisher")){
+			artifact(tasks.getByName("sourcesJar")){
 				groupId = "io.github.dueris"
 				artifactId = "fabric-loader"
 				version = "0.15.7-SNAPSHOT"
